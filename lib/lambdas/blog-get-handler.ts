@@ -5,22 +5,12 @@ import {BlogPostService} from "./BlogPostService";
 const TABLE_NAME = process.env.TABLE_NAME!;
 const blogPostService = new BlogPostService(TABLE_NAME);
 
-export const getBlobPostHandler = async (event: APIGatewayEvent) => {
-    const order = event?.queryStringParameters?.order;
-    let blogPosts = await blogPostService.getAllBlogPost();
-    if (order?.toLowerCase() === "asc") {
-        //order ascending
-        blogPosts = blogPosts.sort((blogPostA,blogPostB) =>
-            blogPostA.createdAt.localeCompare(blogPostB.createdAt)
-        );
-    }  else {
-        //order descending
-        blogPosts = blogPosts.sort((blogPostA,blogPostB) =>
-            blogPostB.createdAt.localeCompare(blogPostA.createdAt)
-        );
-    }
+export const getBlogPostHandler = async (event: APIGatewayEvent) => {
+    const id = event.pathParameters!.id!;
+    let blogPost = await blogPostService.getBlogPostById(id);
+    const returnBody = blogPost! ? blogPost: {"message": "not found!"};
     return {
         statusCode: 200,
-        body: JSON.stringify(blogPosts)
+        body: JSON.stringify(returnBody)
     };
 }

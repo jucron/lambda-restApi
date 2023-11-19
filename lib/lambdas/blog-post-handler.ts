@@ -7,7 +7,7 @@ import {BlogPostService} from "./BlogPostService";
 const TABLE_NAME = process.env.TABLE_NAME!;
 const blogPostService = new BlogPostService(TABLE_NAME);
 
-export const  createBlobPostHandler = async (event: APIGatewayEvent) => {
+export const  createBlogPostHandler = async (event: APIGatewayEvent) => {
     const partialBlogPost = JSON.parse(event.body!) as {
         title: string;
         author: string;
