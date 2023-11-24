@@ -35,5 +35,13 @@ export class RestApiStack extends Stack {
 
     const blogPostByIdPath = blogPostPath.addResource("{id}"); //add further endpoint
     blogPostByIdPath.addMethod("GET",Factory.buildIntegration(getBlogPostLambda)); //add method
+
+    //DELETE lambda function setup
+    lambdaName = "deleteBlogPostHandler";
+    entryHandler = "lib/lambdas/blog-delete-handler.ts";
+    const deleteBlogPostLambda = Factory.buildNodeJsFunction(this, lambdaName,entryHandler,table.tableName);
+    table.grantWriteData(deleteBlogPostLambda); //add table permissions
+
+    blogPostByIdPath.addMethod("DELETE",Factory.buildIntegration(deleteBlogPostLambda)); //add method
   };
 }
