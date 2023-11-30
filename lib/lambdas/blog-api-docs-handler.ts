@@ -1,7 +1,7 @@
 import { APIGatewayEvent } from "aws-lambda";
 import {APIGatewayClient, GetExportCommand} from "@aws-sdk/client-api-gateway";
 
-export const apiDocsHandler = async (event: APIGatewayEvent) => {
+export const blogApiDocsHandler = async (event: APIGatewayEvent) => {
     const apigateway = new APIGatewayClient();
     const restApiId = process.env.API_ID!;
     const getExportCommand = new GetExportCommand({
