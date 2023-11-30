@@ -1,6 +1,7 @@
 import {aws_apigateway, aws_dynamodb, aws_lambda_nodejs, Stack} from "aws-cdk-lib";
 import {NodejsFunction} from "aws-cdk-lib/aws-lambda-nodejs";
 import {AttributeType} from "aws-cdk-lib/aws-dynamodb";
+import {RestApi} from "aws-cdk-lib/aws-apigateway";
 
 export class Factory {
 

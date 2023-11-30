@@ -1,6 +1,7 @@
-import {aws_apigateway, Stack, StackProps} from 'aws-cdk-lib';
+import {aws_apigateway, aws_iam, aws_lambda_nodejs, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Factory} from "./factory";
+import {APIGatewayClient, GetExportCommand } from "@aws-sdk/client-api-gateway"
 
 export class RestApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -43,5 +44,26 @@ export class RestApiStack extends Stack {
     table.grantWriteData(deleteBlogPostLambda); //add table permissions
 
     blogPostByIdPath.addMethod("DELETE",Factory.buildIntegration(deleteBlogPostLambda)); //add method
+
+    //Swagger API lambda function setup
+    //todo: change to Factory build
+    lambdaName = "apiDocsHandler";
+    entryHandler = "lib/lambdas/blog-api-docs-handler.ts";
+    const apiDocsLambda = new aws_lambda_nodejs.NodejsFunction(
+        this, lambdaName,
+        {
+          entry: entryHandler,
+          handler: lambdaName,
+          functionName: lambdaName,
+          environment: {API_ID: api.restApiId}
+        });
+    const policy = new aws_iam.PolicyStatement({
+      actions:["apigateway:GET"],
+      resources:["*"]
+    });
+    apiDocsLambda.role?.addToPrincipalPolicy(policy);
+
+    const apiDocsPath = api.root.addResource("api-docs"); //add endpoint
+    apiDocsPath.addMethod("GET",Factory.buildIntegration(apiDocsLambda));
   };
 }
