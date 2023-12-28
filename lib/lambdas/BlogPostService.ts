@@ -42,7 +42,6 @@ export class BlogPostService {
         }
         return unmarshall(item) as BlogPost;
     }
-
     async deleteBlogPostById(id: string): Promise<void> {
         const params = {
             TableName: this.tableName,

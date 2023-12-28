@@ -1,7 +1,6 @@
 import {aws_apigateway, aws_iam, aws_lambda_nodejs, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Factory} from "./factory";
-import {APIGatewayClient, GetExportCommand } from "@aws-sdk/client-api-gateway"
 
 export class RestApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -9,6 +8,7 @@ export class RestApiStack extends Stack {
 
     //dynamodb Table setting up
     const table = Factory.buildTable(this,"blogPostTable");
+
     //Setting up methods to resource https://.../blogposts
     const api = new aws_apigateway.RestApi(this,"blogPostApi");
     const blogPostPath = api.root.addResource("blogposts"); //add endpoint
@@ -64,6 +64,12 @@ export class RestApiStack extends Stack {
     apiDocsLambda.role?.addToPrincipalPolicy(policy);
 
     const apiDocsPath = api.root.addResource("api-docs"); //add endpoint
-    apiDocsPath.addMethod("GET",Factory.buildIntegration(apiDocsLambda));
+    apiDocsPath.addMethod("GET",Factory.buildIntegration(apiDocsLambda),
+        {
+          requestParameters: {
+            "method.request.querystring.ui": false
+          }
+        }
+    );
   };
 }
